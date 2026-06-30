@@ -72,6 +72,7 @@
 
 <table id="dataTable"></table>
 
+
 <script>
 const form = document.getElementById('dataForm');
 const table = document.getElementById('dataTable');
@@ -104,15 +105,18 @@ form.addEventListener('submit', function(e) {
 
     fetch("https://script.google.com/macros/s/AKfycbzSQ9PA7vFAapCHr0v7UgHKwm1bVCX-SbcKtRzUzTypo8v-lnUu6afWRPwl1vQAgFFC_w/exec", {
         method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
         body: JSON.stringify(data)
     })
     .then(() => {
         alert("✅ Data berhasil dikirim!");
-        loadData(); // refresh data
+        loadData(); // refresh tabel
     })
     .catch(err => {
-        alert("❌ Gagal kirim data");
         console.error(err);
+        alert("❌ Gagal kirim data");
     });
 
     form.reset();
@@ -139,13 +143,13 @@ function renderTable() {
     });
 }
 
-// ✅ hapus data tampilan saja (tidak hapus di sheet)
+// ✅ clear tampilan
 function clearAll() {
     dataList = [];
     renderTable();
 }
 
-// ✅ export ke CSV
+// ✅ export CSV
 function exportToExcel() {
     let csv = "Nama,Email,Keterangan\n";
 
@@ -162,6 +166,5 @@ function exportToExcel() {
     a.click();
 }
 </script>
+``
 
-</body>
-</html>
