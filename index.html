@@ -81,7 +81,7 @@ let dataList = [];
 
 // ✅ ambil data dari Google Sheets
 function loadData() {
-    fetch("https://script.google.com/macros/s/AKfycbzSQ9PA7vFAapCHr0v7UgHKwm1bVCX-SbcKtRzUzTypo8v-lnUu6afWRPwl1vQAgFFC_w/exec")
+    fetch("https://script.google.com/macros/s/AKfycbzrHbxNTyJfPd3FTTu2V3gYhpjg17GSqJf6R3vJ3sl85YA1eKt7cYE18IZtJXSkz1GxyQ/exec")
         .then(res => res.json())
         .then(data => {
             dataList = data;
@@ -103,7 +103,7 @@ form.addEventListener('submit', function(e) {
 
     const data = { nama, email, keterangan };
 
-    fetch("https://script.google.com/macros/s/AKfycbzSQ9PA7vFAapCHr0v7UgHKwm1bVCX-SbcKtRzUzTypo8v-lnUu6afWRPwl1vQAgFFC_w/exec", {
+    fetch("https://script.google.com/macros/s/AKfycbzrHbxNTyJfPd3FTTu2V3gYhpjg17GSqJf6R3vJ3sl85YA1eKt7cYE18IZtJXSkz1GxyQ/exec", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
