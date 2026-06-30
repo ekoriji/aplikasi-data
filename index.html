@@ -35,6 +35,7 @@
         .btn-save { background: #28a745; }
         .btn-delete { background: #dc3545; }
         .btn-clear { background: #ff9800; margin-top: 10px; }
+        .btn-export { background: #007bff; margin-top: 10px; }
 
         table {
             margin-top: 20px;
@@ -65,11 +66,7 @@
 </form>
 
 <button onclick="clearAll()" class="btn-clear">Hapus Semua Data</button>
-
-<button onclick="exportToExcel()" style="background:#007bff; margin-top:10px; color:white; padding:10px; border:none; cursor:pointer;">
-    Export ke Excel
-</button>
-``
+<button onclick="exportToExcel()" class="btn-export">Export ke Excel</button>
 
 <h2>Data Terkumpul</h2>
 
@@ -79,28 +76,23 @@
 const form = document.getElementById('dataForm');
 const table = document.getElementById('dataTable');
 
-// ambil data dari localStorage
 let dataList = [];
 
-
+// ✅ ambil data dari Google Sheets
 function loadData() {
     fetch("https://script.google.com/macros/s/AKfycbzSQ9PA7vFAapCHr0v7UgHKwm1bVCX-SbcKtRzUzTypo8v-lnUu6afWRPwl1vQAgFFC_w/exec")
         .then(res => res.json())
         .then(data => {
             dataList = data;
             renderTable();
-        });
+        })
+        .catch(err => console.error("Load error:", err));
 }
-``
 
-// tampilkan
+// ✅ load pertama
 loadData();
 
-.then(() => {
-    alert("Data berhasil dikirim!");
-    loadData(); // 🔥 refresh data otomatis
-})
-
+// ✅ kirim data ke Google Sheet
 form.addEventListener('submit', function(e) {
     e.preventDefault();
 
@@ -110,66 +102,50 @@ form.addEventListener('submit', function(e) {
 
     const data = { nama, email, keterangan };
 
-    // 🔥 kirim ke Google Sheets
     fetch("https://script.google.com/macros/s/AKfycbzSQ9PA7vFAapCHr0v7UgHKwm1bVCX-SbcKtRzUzTypo8v-lnUu6afWRPwl1vQAgFFC_w/exec", {
         method: "POST",
         body: JSON.stringify(data)
     })
     .then(() => {
-        alert("Data berhasil dikirim ke Google Sheet!");
+        alert("✅ Data berhasil dikirim!");
+        loadData(); // refresh data
     })
     .catch(err => {
-        alert("Gagal kirim data!");
+        alert("❌ Gagal kirim data");
         console.error(err);
     });
 
     form.reset();
 });
 
-// fungsi tampilkan data
+// ✅ tampilkan tabel
 function renderTable() {
     table.innerHTML = `
         <tr>
             <th>Nama</th>
             <th>Email</th>
             <th>Keterangan</th>
-            <th>Aksi</th>
         </tr>
     `;
 
-    dataList.forEach((d, index) => {
+    dataList.forEach(d => {
         table.innerHTML += `
             <tr>
                 <td>${d.nama}</td>
                 <td>${d.email}</td>
                 <td>${d.keterangan}</td>
-                <td>
-                    <button class="btn-delete" onclick="deleteData(${index})">Hapus</button>
-                </td>
             </tr>
         `;
     });
 }
 
-// hapus 1 data
-function deleteData(index) {
-    dataList.splice(index, 1);
-    localStorage.setItem('dataList', JSON.stringify(dataList));
+// ✅ hapus data tampilan saja (tidak hapus di sheet)
+function clearAll() {
+    dataList = [];
     renderTable();
 }
 
-// hapus semua data
-function clearAll() {
-    if (confirm("Yakin ingin menghapus semua data?")) {
-        dataList = [];
-        localStorage.removeItem('dataList');
-        renderTable();
-    }
-}
-</script>
-
-<script>
-
+// ✅ export ke CSV
 function exportToExcel() {
     let csv = "Nama,Email,Keterangan\n";
 
@@ -177,17 +153,15 @@ function exportToExcel() {
         csv += `${d.nama},${d.email},${d.keterangan}\n`;
     });
 
-    const blob = new Blob([csv], { type: 'text/csv' });
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const url = window.URL.createObjectURL(blob);
 
     const a = document.createElement('a');
-    a.setAttribute('href', url);
-    a.setAttribute('download', 'data.csv');
+    a.href = url;
+    a.download = "data.csv";
     a.click();
 }
-
 </script>
-``
 
 </body>
 </html>
