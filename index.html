@@ -80,10 +80,27 @@ const form = document.getElementById('dataForm');
 const table = document.getElementById('dataTable');
 
 // ambil data dari localStorage
-let dataList = JSON.parse(localStorage.getItem('dataList')) || [];
+let dataList = [];
+
+
+function loadData() {
+    fetch("https://script.google.com/macros/s/AKfycbzSQ9PA7vFAapCHr0v7UgHKwm1bVCX-SbcKtRzUzTypo8v-lnUu6afWRPwl1vQAgFFC_w/exec")
+        .then(res => res.json())
+        .then(data => {
+            dataList = data;
+            renderTable();
+        });
+}
+``
 
 // tampilkan
-renderTable();
+loadData();
+
+.then(() => {
+    alert("Data berhasil dikirim!");
+    loadData(); // 🔥 refresh data otomatis
+})
+
 
 form.addEventListener('submit', function(e) {
     e.preventDefault();
