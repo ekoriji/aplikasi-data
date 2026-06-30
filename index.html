@@ -33,7 +33,6 @@
             cursor: pointer;
         }
         .btn-save { background: #28a745; }
-        .btn-delete { background: #dc3545; }
         .btn-clear { background: #ff9800; margin-top: 10px; }
         .btn-export { background: #007bff; margin-top: 10px; }
 
@@ -51,7 +50,6 @@
             background: #eee;
         }
     </style>
-
 </head>
 
 <body>
@@ -72,16 +70,18 @@
 
 <table id="dataTable"></table>
 
-
 <script>
 const form = document.getElementById('dataForm');
 const table = document.getElementById('dataTable');
+
+// ✅ GANTI DENGAN LINK WEB APP URL KAMU
+const API_URL = "https://script.google.com/macros/s/AKfycbzrHbxNTyJfPd3FTTu2V3gYhpjg17GSqJf6R3vJ3sl85YA1eKt7cYE18IZtJXSkz1GxyQ/exec";
 
 let dataList = [];
 
 // ✅ ambil data dari Google Sheets
 function loadData() {
-    fetch("https://script.google.com/macros/s/AKfycbzrHbxNTyJfPd3FTTu2V3gYhpjg17GSqJf6R3vJ3sl85YA1eKt7cYE18IZtJXSkz1GxyQ/exec")
+    fetch(API_URL)
         .then(res => res.json())
         .then(data => {
             dataList = data;
@@ -103,7 +103,7 @@ form.addEventListener('submit', function(e) {
 
     const data = { nama, email, keterangan };
 
-    fetch("https://script.google.com/macros/s/AKfycbzrHbxNTyJfPd3FTTu2V3gYhpjg17GSqJf6R3vJ3sl85YA1eKt7cYE18IZtJXSkz1GxyQ/exec", {
+    fetch(API_URL, {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -112,7 +112,7 @@ form.addEventListener('submit', function(e) {
     })
     .then(() => {
         alert("✅ Data berhasil dikirim!");
-        loadData(); // refresh tabel
+        loadData(); // refresh data
     })
     .catch(err => {
         console.error(err);
@@ -143,13 +143,13 @@ function renderTable() {
     });
 }
 
-// ✅ clear tampilan
+// ✅ clear tampilan saja
 function clearAll() {
     dataList = [];
     renderTable();
 }
 
-// ✅ export CSV
+// ✅ export ke CSV
 function exportToExcel() {
     let csv = "Nama,Email,Keterangan\n";
 
@@ -166,5 +166,6 @@ function exportToExcel() {
     a.click();
 }
 </script>
-``
 
+</body>
+</html>
