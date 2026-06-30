@@ -1,0 +1,168 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Aplikasi Pengumpulan Data</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            margin: 40px;
+            background: #f4f4f4;
+        }
+        h2 {
+            color: #333;
+        }
+        form {
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            width: 320px;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            box-sizing: border-box;
+        }
+        button {
+            padding: 10px;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .btn-save { background: #28a745; }
+        .btn-delete { background: #dc3545; }
+        .btn-clear { background: #ff9800; margin-top: 10px; }
+
+        table {
+            margin-top: 20px;
+            background: #fff;
+            border-collapse: collapse;
+            width: 100%;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+        }
+        th {
+            background: #eee;
+        }
+    </style>
+
+</head>
+
+<body>
+
+<h2>Form Pengumpulan Data</h2>
+
+<form id="dataForm">
+    <input type="text" id="nama" placeholder="Nama" required>
+    <input type="email" id="email" placeholder="Email" required>
+    <textarea id="keterangan" placeholder="Keterangan"></textarea>
+    <button type="submit" class="btn-save">Simpan</button>
+</form>
+
+<button onclick="clearAll()" class="btn-clear">Hapus Semua Data</button>
+
+<button onclick="exportToExcel()" style="background:#007bff; margin-top:10px; color:white; padding:10px; border:none; cursor:pointer;">
+    Export ke Excel
+</button>
+``
+
+<h2>Data Terkumpul</h2>
+
+<table id="dataTable"></table>
+
+<script>
+const form = document.getElementById('dataForm');
+const table = document.getElementById('dataTable');
+
+// ambil data dari localStorage
+let dataList = JSON.parse(localStorage.getItem('dataList')) || [];
+
+// tampilkan
+renderTable();
+
+form.addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const nama = document.getElementById('nama').value;
+    const email = document.getElementById('email').value;
+    const keterangan = document.getElementById('keterangan').value;
+
+    const data = { nama, email, keterangan };
+
+    dataList.push(data);
+    localStorage.setItem('dataList', JSON.stringify(dataList));
+
+    renderTable();
+    form.reset();
+});
+
+// fungsi tampilkan data
+function renderTable() {
+    table.innerHTML = `
+        <tr>
+            <th>Nama</th>
+            <th>Email</th>
+            <th>Keterangan</th>
+            <th>Aksi</th>
+        </tr>
+    `;
+
+    dataList.forEach((d, index) => {
+        table.innerHTML += `
+            <tr>
+                <td>${d.nama}</td>
+                <td>${d.email}</td>
+                <td>${d.keterangan}</td>
+                <td>
+                    <button class="btn-delete" onclick="deleteData(${index})">Hapus</button>
+                </td>
+            </tr>
+        `;
+    });
+}
+
+// hapus 1 data
+function deleteData(index) {
+    dataList.splice(index, 1);
+    localStorage.setItem('dataList', JSON.stringify(dataList));
+    renderTable();
+}
+
+// hapus semua data
+function clearAll() {
+    if (confirm("Yakin ingin menghapus semua data?")) {
+        dataList = [];
+        localStorage.removeItem('dataList');
+        renderTable();
+    }
+}
+</script>
+
+<script>
+
+function exportToExcel() {
+    let csv = "Nama,Email,Keterangan\n";
+
+    dataList.forEach(d => {
+        csv += `${d.nama},${d.email},${d.keterangan}\n`;
+    });
+
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.setAttribute('href', url);
+    a.setAttribute('download', 'data.csv');
+    a.click();
+}
+
+</script>
+``
+
+</body>
+</html>
