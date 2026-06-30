@@ -94,10 +94,19 @@ form.addEventListener('submit', function(e) {
 
     const data = { nama, email, keterangan };
 
-    dataList.push(data);
-    localStorage.setItem('dataList', JSON.stringify(dataList));
+    // 🔥 kirim ke Google Sheets
+    fetch(https://script.google.com/macros/s/AKfycbzSQ9PA7vFAapCHr0v7UgHKwm1bVCX-SbcKtRzUzTypo8v-lnUu6afWRPwl1vQAgFFC_w/exec, {
+        method: "POST",
+        body: JSON.stringify(data)
+    })
+    .then(() => {
+        alert("Data berhasil dikirim ke Google Sheet!");
+    })
+    .catch(err => {
+        alert("Gagal kirim data!");
+        console.error(err);
+    });
 
-    renderTable();
     form.reset();
 });
 
